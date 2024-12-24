@@ -20,7 +20,7 @@ def format_gemini_text(raw_text):
 
 
 # configure Google Gemini API
-genai.configure(api_key="AIzaSyBDgtdh0-5UtH_8SJWRbv827vIcm8bVUxs")  # API
+genai.configure(api_key="Your_API")  # API
 
 def get_gemini_suggestions(input_data, prediction_text):
     try:
