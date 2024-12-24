@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+        .main-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .left-section {
+            flex: 2;
+            margin-right: 20px;
+        }
+        .right-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: #fff;
+            color: #333;
+        }
+        .card-header {
+            font-weight: bold;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            color: #fff;
+            border-radius: 20px 20px 0 0;
+        }
+        .btn-light, .btn-secondary {
+            border-radius: 10px;
+        }
+        .recommendation-card {
+            margin-top: 20px;
+        }
+        .risk-bar-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .risk-bar {
+            width: 80%;
+            height: 20px;
+            border-radius: 10px;
+            background: #e0e0e0;
+            margin: 0 auto;
+            position: relative;
+        }
+        .risk-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: width 0.5s;
+        }
+        .low-risk-bar {
+            background: #43cea2;
+        }
+        .high-risk-bar {
+            background: #ff6b6b;
+        }
+        .risk-text {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .qr-code-container {
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px;
+            width: 90%;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+        canvas {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- Sol Bölüm: Prediction Sonuçları -->
+    <div class="left-section">
+        <!-- Risk Bar -->
+        <div class="card shadow-sm">
+            <div class="card-header text-center">
+                <h1><i class="fas fa-heartbeat"></i> Risk Level</h1>
+            </div>
+            <div class="card-body text-center">
+                <div class="risk-bar-container">
+                    <div class="risk-bar">
+                        <div class="risk-bar-fill {% if 'Low' in prediction %}low-risk-bar{% else %}high-risk-bar{% endif %}" style="width: {% if 'Low' in prediction %}30{% else %}80{% endif %}%;"></div>
+                    </div>
+                    <div class="risk-text {% if 'Low' in prediction %}text-success{% else %}text-danger{% endif %}">
+                        {% if 'Low' in prediction %}Low Risk{% else %}High Risk{% endif %}
+                    </div>
+                </div>
+                <a href="/download_pdf?prediction={{ prediction }}&Age={{ features[0] }}" class="btn btn-light mt-3">Download PDF</a>
+                <a href="/" class="btn btn-secondary mt-3">Try Again</a>
+            </div>
+        </div>
+
+        <!-- Recommendations Card -->
+        <div class="card recommendation-card mt-4 shadow-sm">
+            <div class="card-header text-center">
+                <h2><i class="fas fa-notes-medical"></i> Recommendations</h2>
+            </div>
+            <div class="card-body">
+                <p>{{ suggestions }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sağ Bölüm: MHRS ve QR Kod -->
+    <div class="right-section">
+        <!-- MHRS -->
+        <div class="card shadow-sm">
+            <div class="card-header text-center">
+                <h5><i class="fas fa-calendar-check"></i> Book an Appointment via MHRS</h5>
+            </div>
+            <div class="card-body">
+                <p>Click below to book an appointment through MHRS:</p>
+                <a href="https://www.mhrs.gov.tr/" target="_blank" class="btn btn-danger w-100">Book Appointment</a>
+                <iframe src="https://www.mhrs.gov.tr/" title="MHRS Appointment"></iframe>
+            </div>
+        </div>
+
+        <!-- Share Your Results -->
+        <div class="card qr-code-container shadow-sm">
+            <h5 class="text-center"><i class="fas fa-qrcode"></i> Share Your Results</h5>
+            <div class="d-flex justify-content-around align-items-center">
+                <canvas id="qrCanvas"></canvas>
+                <div class="text-center">
+                    <p>Scan the QR code to share or save your results.</p>
+                    <div class="mb-3">
+                        <a href="/help" class="btn btn-outline-secondary btn-sm me-2">Help</a>
+                        <a href="/contact" class="btn btn-outline-primary btn-sm">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // QR Code Generator
+    const qrCanvas = document.getElementById('qrCanvas');
+    const resultURL = window.location.href;
+    QRCode.toCanvas(qrCanvas, resultURL, { width: 100, color: { dark: '#000', light: '#fff' } });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

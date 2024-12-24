@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .card-header {
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+        }
+        h1 {
+            font-weight: bold;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-white text-center">
+                <h1><i class="fas fa-heartbeat"></i> Heart Disease Prediction</h1>
+                <p class="mb-0">Enter your details to predict heart disease risk</p>
+            </div>
+            <div class="card-body">
+                <form action="/predict" method="post">
+                    <div class="mb-3">
+                        <label for="Age" class="form-label">Age (Years)</label>
+                        <input type="number" class="form-control" name="Age" min="18" max="100" placeholder="Enter age (18-100)" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Sex" class="form-label">Sex</label>
+                        <select class="form-select" name="Sex" required>
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Chest pain type" class="form-label">Chest Pain Type</label>
+                        <select class="form-select" name="Chest pain type" required>
+                            <option value="1">Typical Angina</option>
+                            <option value="2">Atypical Angina</option>
+                            <option value="3">Non-Anginal Pain</option>
+                            <option value="4">Asymptomatic</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="BP" class="form-label">Resting Blood Pressure (mmHg)</label>
+                        <input type="number" class="form-control" name="BP" min="80" max="200" placeholder="Enter BP (80-200)" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Cholesterol" class="form-label">Cholesterol (mg/dL)</label>
+                        <input type="number" class="form-control" name="Cholesterol" min="100" max="400" placeholder="Enter Cholesterol (100-400)" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="FBS over 120" class="form-label">Fasting Blood Sugar > 120 mg/dL</label>
+                        <select class="form-select" name="FBS over 120" required>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="EKG results" class="form-label">Resting ECG Results</label>
+                        <select class="form-select" name="EKG results" required>
+                            <option value="0">Normal</option>
+                            <option value="1">ST-T Wave Abnormality</option>
+                            <option value="2">Left Ventricular Hypertrophy</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Max HR" class="form-label">Maximum Heart Rate Achieved</label>
+                        <input type="number" class="form-control" name="Max HR" min="60" max="220" placeholder="Enter Max HR (60-220)" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Exercise angina" class="form-label">Exercise Induced Angina</label>
+                        <select class="form-select" name="Exercise angina" required>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ST depression" class="form-label">ST Depression Induced by Exercise</label>
+                        <input type="number" class="form-control" name="ST depression" min="0" max="6" step="0.1" placeholder="Enter ST Depression (0-6)" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Slope of ST" class="form-label">Slope of Peak Exercise ST Segment</label>
+                        <select class="form-select" name="Slope of ST" required>
+                            <option value="1">Upsloping</option>
+                            <option value="2">Flat</option>
+                            <option value="3">Downsloping</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Number of vessels fluro" class="form-label">Number of Major Vessels (0-3)</label>
+                        <input type="number" class="form-control" name="Number of vessels fluro" min="0" max="3" placeholder="Enter number of vessels (0-3)" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Thallium" class="form-label">Thallium Stress Test Result</label>
+                        <select class="form-select" name="Thallium" required>
+                            <option value="3">Normal</option>
+                            <option value="6">Fixed Defect</option>
+                            <option value="7">Reversible Defect</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Predict</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
