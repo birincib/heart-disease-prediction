@@ -21,4 +21,5 @@ This repository contains a project for predicting heart disease using machine le
 ## How to Run
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/heart-disease-prediction.git
+[   git clone https://github.com/yourusername/heart-disease-prediction.git
+](https://github.com/birincib/heart-disease-prediction.git)
